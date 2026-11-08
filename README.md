@@ -8,7 +8,7 @@ No replacement calendar interface, account signup, or external dependencies.
 
 ## How it works
 
-Choose lists once in the menu bar app. Each gets its own calendar, such as `RF TEST • Work` or `RF TEST • Studying`.
+Choose lists once in the menu bar app. Each gets its own calendar, such as `Reminders • Work` or `Reminders • Studying`.
 
 | Action | Result |
 | --- | --- |
@@ -41,6 +41,10 @@ Built and used on a MacBook Air M4 running macOS 15.7.4. Other macOS versions an
 
 ## Build and install
 
+Download the Apple Silicon app from [GitHub Releases](https://github.com/hasancanbiyik/apple-reminders-calendar-filter/releases/latest), unzip it, quit any existing copy, and drag **Reminder Calendars.app** into **Applications**. Release builds are locally signed and not notarized; see the signing note below.
+
+Or build from source:
+
 ```sh
 git clone https://github.com/hasancanbiyik/apple-reminders-calendar-filter.git
 cd apple-reminders-calendar-filter
@@ -63,10 +67,20 @@ For Xcode, open `RemindersCalendarFilter.xcodeproj`, select the **RemindersCalen
 4. Select at least one Reminders list.
 5. **Click Sync Now once to start synchronization.** Selecting a list alone does not start the first sync. Check the result and any error in the panel.
 6. In Apple Calendar, choose **View → Show Calendar List** and uncheck **Scheduled Reminders**.
-7. Use the new **RF TEST • List Name** sidebar checkboxes to show or hide categories. The current naming prefix can be changed by renaming the calendars in Apple Calendar; stored bindings use their identifiers.
+7. Use the new **Reminders • List Name** sidebar checkboxes to show or hide categories. Version 0.1.2 also renames tracked calendars with the old `RF TEST` prefix during sync, preserving their identifiers and event mappings. Custom names without that prefix are left alone.
 8. Enable **Launch at login** in the app. Approve it in **System Settings → General → Login Items & Extensions** if requested.
 
 After setup, filter categories directly in Apple Calendar. Hidden calendars keep synchronizing. Apple Calendar need not be open, but the menu bar app must remain running. Sleep and shutdown pause synchronization.
+
+## Why updates take a few seconds
+
+The app waits 1.5 seconds after an EventKit change notification before starting a sync, grouping changes made while typing or editing. macOS must also deliver the notification, save the mirrored event, and refresh Calendar; cloud accounts can add further delay. The 60-second polling timer is a fallback if a notification is missed. **Sync Now** skips the app’s debounce delay, but cannot force macOS or iCloud to refresh instantly.
+
+## Creating items from Apple Calendar
+
+An ordinary event added to a mirrored calendar stays a calendar event. It does not create an original reminder, and the app leaves untracked events alone. Editing a mirrored copy also does not update its original.
+
+To create a real reminder inside Apple Calendar, use **+ → New Reminder** and choose the intended Reminders list. If that list is enabled in Reminder Calendars and the reminder has a due date, it will be mirrored on a later sync. This uses Apple’s native reminder creation; the app itself never writes to Reminders. See [Apple’s instructions](https://support.apple.com/guide/calendar/icl873b9a527/mac).
 
 ## Permissions and data safety
 
@@ -91,7 +105,7 @@ A missing/read-only tracked calendar or altered event ownership pauses synchroni
 ## Troubleshooting
 
 - **No lists visible:** click Refresh and check Reminders accounts and permissions. Version 0.1.1 fixes a collapsed list-selection viewport.
-- **List selected but no calendar appeared:** click **Sync Now** for the initial sync. Check the updated status/time and the `RF TEST` entries in Calendar’s sidebar.
+- **List selected but no calendar appeared:** click **Sync Now** for the initial sync. Check the updated status/time and the `Reminders • List Name` entries in Calendar’s sidebar.
 - **No writable account or calendar creation fails:** create an ordinary calendar in a writable account in Apple Calendar, then refresh. Some providers do not allow additional calendars. EventKit cannot create a new local account/source.
 - **Selected list unavailable:** restore its account, or use Stop mirroring for an intentionally removed list.
 - **Tracked calendar missing/read-only:** restore that calendar/account. The app deliberately does not replace it automatically.

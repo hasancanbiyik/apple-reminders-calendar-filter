@@ -183,7 +183,7 @@ final class SyncController: ObservableObject {
               let calendar = store.calendar(withIdentifier: id),
               calendar.allowedEntityTypes.contains(.event), calendar.allowsContentModifications,
               !calendar.isSubscribed else {
-            throw FilterError.message("A tracked test calendar is missing or read-only. Restore it or its account before syncing. The app will not substitute another calendar.")
+            throw FilterError.message("A tracked reminder calendar is missing or read-only. Restore it or its account before syncing. The app will not substitute another calendar.")
         }
         return calendar
     }
@@ -193,15 +193,29 @@ final class SyncController: ObservableObject {
         guard let list = lists.first(where: { $0.id == listID }),
               accounts.contains(where: { $0.id == selectedAccountID }),
               let source = store.source(withIdentifier: selectedAccountID) else {
-            throw FilterError.message("Choose a writable account for the new test calendars. If none appears, add a local or iCloud calendar in Apple Calendar first.")
+            throw FilterError.message("Choose a writable account for the new reminder calendars. If none appears, add a local or iCloud calendar in Apple Calendar first.")
         }
         let calendar = EKCalendar(for: .event, eventStore: store)
-        calendar.title = "RF TEST • \(list.title)"
+        calendar.title = MirrorCalendarName.title(for: list.title)
         calendar.source = source
         try store.saveCalendar(calendar, commit: true)
         state.calendars[listID] = calendar.calendarIdentifier
         try persist()
         return calendar
+    }
+
+    private func migrateCalendarNames() throws {
+        // Only calendars whose identifiers we persisted at creation are eligible.
+        // Rename in place: retain bindings, events, colors, and visibility. Custom
+        // titles without the old generated prefix are left alone.
+        for id in Set(state.calendars.values).sorted() {
+            guard let calendar = store.calendar(withIdentifier: id),
+                  calendar.allowedEntityTypes.contains(.event),
+                  calendar.allowsContentModifications, !calendar.isSubscribed,
+                  let title = MirrorCalendarName.migratedTitle(from: calendar.title) else { continue }
+            calendar.title = title
+            try store.saveCalendar(calendar, commit: true)
+        }
     }
 
     private func assertOwned(_ event: EKEvent, record: MirrorRecord) throws {
@@ -317,6 +331,7 @@ final class SyncController: ObservableObject {
                 schedules[reminder.calendarItemIdentifier] = try EventSchedule.from(reminder.dueDateComponents!)
             }
             for record in state.records { _ = try existingDestination(record.destinationCalendarID) }
+            try migrateCalendarNames()
             var destinations: [String: EKCalendar] = [:]
             for listID in state.selectedListIDs.sorted() { destinations[listID] = try destination(for: listID) }
 

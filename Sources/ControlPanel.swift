@@ -63,7 +63,7 @@ struct ControlPanel: View {
                         Text(account.title + (account.isLocal ? " (local)" : "")).tag(account.id)
                     }
                 }.disabled(!controller.canConfigure)
-                Text("Creates RF TEST • List calendars in this account. Cloud accounts use their normal sync settings.")
+                Text("Creates Reminders • List calendars in this account. Cloud accounts use their normal sync settings.")
                     .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
 
@@ -101,7 +101,7 @@ struct ControlPanel: View {
                 Spacer()
                 Button("Quit") { NSApplication.shared.terminate(nil) }
             }
-            Text("In Calendar, turn off Scheduled Reminders and use each RF TEST calendar checkbox. Edit tasks in Reminders. Repeating tasks show their current due item only.")
+            Text("In Calendar, turn off Scheduled Reminders and use each Reminders • List calendar checkbox. Edit tasks in Reminders. Repeating tasks show their current due item only.")
                 .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
         }
         .padding(16)

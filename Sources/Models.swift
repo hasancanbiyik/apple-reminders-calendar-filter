@@ -12,6 +12,16 @@ struct CalendarAccount: Identifiable {
     let isLocal: Bool
 }
 
+enum MirrorCalendarName {
+    static func title(for listTitle: String) -> String { "Reminders • \(listTitle)" }
+
+    static func migratedTitle(from currentTitle: String) -> String? {
+        let legacyPrefix = "RF TEST • "
+        guard currentTitle.hasPrefix(legacyPrefix) else { return nil }
+        return title(for: String(currentTitle.dropFirst(legacyPrefix.count)))
+    }
+}
+
 struct MirrorRecord: Codable {
     var token: UUID = UUID()
     var reminderID: String
