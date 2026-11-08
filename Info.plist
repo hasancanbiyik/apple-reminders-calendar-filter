@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+    <key>CFBundleDevelopmentRegion</key><string>en</string>
+    <key>CFBundleExecutable</key><string>RemindersCalendarFilter</string>
+    <key>CFBundleIdentifier</key><string>com.hasancan.RemindersCalendarFilter</string>
+    <key>CFBundleName</key><string>Reminder Calendars</string>
+    <key>CFBundleDisplayName</key><string>Reminder Calendars</string>
+    <key>CFBundlePackageType</key><string>APPL</string>
+    <key>CFBundleShortVersionString</key><string>0.1.1</string>
+    <key>CFBundleVersion</key><string>2</string>
+    <key>LSMinimumSystemVersion</key><string>14.0</string>
+    <key>LSUIElement</key><true/>
+    <key>NSHighResolutionCapable</key><true/>
+    <key>NSCalendarsFullAccessUsageDescription</key><string>Create and maintain separate reminder calendars. Only events tracked as this app's copies are changed or removed.</string>
+    <key>NSRemindersFullAccessUsageDescription</key><string>Read your reminder lists, titles, due dates, and completion status. This app never changes or deletes original reminders.</string>
+    <key>NSCalendarsUsageDescription</key><string>Maintain this app's separate reminder calendars.</string>
+    <key>NSRemindersUsageDescription</key><string>Read reminders without changing them.</string>
+</dict></plist>

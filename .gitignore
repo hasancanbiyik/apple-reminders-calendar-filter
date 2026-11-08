@@ -1,0 +1,10 @@
+build/
+*.xcuserstate
+xcuserdata/
+.DS_Store
+DerivedData/
+*.app/
+*.dSYM/
+state.json
+.env
+.env.*
